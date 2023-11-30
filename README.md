@@ -1,2 +1,2 @@
-# Example
-An example greeter plugin
+# Controller
+A controller input plugin
