@@ -8,12 +8,14 @@ repositories {
 		url = 'https://repo.runelite.net'
 	}
 	mavenCentral()
+	jcenter()
 }
 
 def runeLiteVersion = 'latest.release'
 
 dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
+	compileOnly 'uk.co.electronstudio.sdl2gdx:sdl2gdx:1.0.+'
 
 	compileOnly 'org.projectlombok:lombok:1.18.30'
 	annotationProcessor 'org.projectlombok:lombok:1.18.30'
@@ -21,6 +23,8 @@ dependencies {
 	testImplementation 'junit:junit:4.12'
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
+	testImplementation 'uk.co.electronstudio.sdl2gdx:sdl2gdx:1.0.+'
+
 }
 
 group = 'com.controller'

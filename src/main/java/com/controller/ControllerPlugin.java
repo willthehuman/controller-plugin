@@ -27,17 +27,17 @@ public class ControllerPlugin extends Plugin
 
 	@Inject
 	private ControllerConfig config;
+	@Inject
+	private DebugOverlay debugOverlay;
+
+	@Inject
+	private OverlayManager overlayManager;
 
 	private GraphicsDevice gd;
 	private JRootPane rootPane;
 	private ContainableFrame frame;
 	private Window window;
 
-	@Inject
-	private DebugOverlay debugOverlay;
-
-	@Inject
-	private OverlayManager overlayManager;
 
 	@Override
 	protected void startUp() throws Exception
@@ -57,6 +57,10 @@ public class ControllerPlugin extends Plugin
 		rootPane = ((ContainableFrame) window).getRootPane();
 
 		overlayManager.add(debugOverlay);
+	}
+
+	public void externalLog(String text){
+		log.info(text);
 	}
 
 	@Override
