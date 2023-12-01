@@ -4,8 +4,11 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.Varbits;
 import net.runelite.api.events.CanvasSizeChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -38,7 +41,6 @@ public class ControllerPlugin extends Plugin
 	private ContainableFrame frame;
 	private Window window;
 
-
 	@Override
 	protected void startUp() throws Exception
 	{
@@ -59,6 +61,39 @@ public class ControllerPlugin extends Plugin
 		overlayManager.add(debugOverlay);
 	}
 
+	public Widget getMinimapDrawWidget()
+	{
+		Widget fixedWidget = client.getWidget(WidgetInfo.FIXED_VIEWPORT_MINIMAP);
+		if(fixedWidget == null){
+			return client.getWidget(WidgetInfo.RESIZABLE_MINIMAP_STONES_DRAW_AREA);
+		}
+		return fixedWidget;
+	}
+
+	public Widget getInventoryDrawWidget(){
+		Widget fixedWidget = client.getWidget(WidgetInfo.FIXED_VIEWPORT_INVENTORY_CONTAINER);
+		if(fixedWidget == null){
+			return client.getWidget(WidgetInfo.RESIZABLE_VIEWPORT_INVENTORY_PARENT);
+		}
+		return fixedWidget;
+	}
+
+	public Widget getMainWidget(){
+		Widget fixedWidget = client.getWidget(WidgetInfo.FIXED_VIEWPORT);
+		if(fixedWidget == null){
+			return client.getWidget(WidgetInfo.MULTICOMBAT_RESIZABLE_CLASSIC);
+		}
+		return fixedWidget;
+	}
+
+	public Rectangle getScreen(){
+		return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+	}
+
+	public Window getWindow(){
+		return window;
+	}
+
 	public void externalLog(String text){
 		log.info(text);
 	}
@@ -73,14 +108,11 @@ public class ControllerPlugin extends Plugin
 
 	@Subscribe
 	public void onGameTick(GameTick gameTick) {
-		log.info("X pos : " + window.getX() + " Y pos : " + window.getY());
-
 
 	}
 
 	@Subscribe
 	public void onCanvasSizeChanged(CanvasSizeChanged canvasSizeChanged){
-		log.info("Center X : " + client.getCenterX() + " Center Y : " + client.getCenterY());
 	}
 
 	@Provides
