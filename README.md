@@ -1,5 +1,5 @@
 Note that this plugin will never be approved by runelite because of the use of java robot.
-# Controller
+# RuneLite Controller Plugin
 A controller input plugin for RuneLite.
 
 Works best in fixed classic mode.
