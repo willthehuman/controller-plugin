@@ -20,8 +20,9 @@ public interface ControllerConfig extends Config
 		START(SDL.SDL_CONTROLLER_BUTTON_START),
 		SELECT(SDL.SDL_CONTROLLER_BUTTON_BACK),
 		RIGHT_BUMPER(SDL.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER),
-		LEFT_BUMBER(SDL.SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
-
+		LEFT_BUMPER(SDL.SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+//		RIGHT_TRIGGER(SDL.SDL_CONTROLLER_AXIS_TRIGGERRIGHT),
+//		LEFT_TRIGGER(SDL.SDL_CONTROLLER_AXIS_TRIGGERLEFT);
 		public final int buttonMask;
 
 		Button(int mask){
@@ -67,7 +68,7 @@ public interface ControllerConfig extends Config
 	)
 	default Button minimapButton()
 	{
-		return Button.LEFT_BUMBER;
+		return Button.LEFT_BUMPER;
 	}
 	@ConfigItem(
 			keyName = "inventoryFocus",
@@ -80,10 +81,31 @@ public interface ControllerConfig extends Config
 		return Button.RIGHT_BUMPER;
 	}
 /*	@ConfigItem(
+			keyName = "zoomIn",
+			name = "Zoom in",
+			description = "The controller button to zoom in.",
+			position = 5
+	)
+	default Button zoomInButton()
+	{
+		return Button.RIGHT_TRIGGER;
+	}
+	@ConfigItem(
+			keyName = "zoomOut",
+			name = "Zoom out",
+			description = "The controller button to zoom out.",
+			position = 6
+	)
+	default Button zoomOutButton()
+	{
+		return Button.LEFT_TRIGGER;
+	}*/
+
+/*	@ConfigItem(
 			keyName = "fn",
 			name = "Function key",
 			description = "Should simulate a press to the fn key before simulating the F keys.",
-			position = 5
+			position = 7
 	)
 	default boolean simulateFN()
 	{
@@ -93,7 +115,7 @@ public interface ControllerConfig extends Config
 			keyName = "prayersTab",
 			name = "Prayer tab",
 			description = "The controller button to open the prayers.",
-			position = 6
+			position = 8
 	)
 	default Button prayerButton()
 	{
@@ -103,7 +125,7 @@ public interface ControllerConfig extends Config
 			keyName = "spellsTab",
 			name = "Spell book tab",
 			description = "The controller button to open the spells.",
-			position = 7
+			position = 9
 	)
 	default Button spellsButton()
 	{
@@ -113,7 +135,7 @@ public interface ControllerConfig extends Config
 			keyName = "combatTab",
 			name = "Combat tab",
 			description = "The controller button to open the combat tab.",
-			position = 8
+			position = 10
 	)
 	default Button combatButton()
 	{
@@ -123,7 +145,7 @@ public interface ControllerConfig extends Config
 			keyName = "inventoryTab",
 			name = "Inventory tab",
 			description = "The controller button to open the inventory.",
-			position = 9
+			position = 11
 	)
 	default Button inventoryTabButton()
 	{

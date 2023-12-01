@@ -38,6 +38,8 @@ public class DebugOverlay extends Overlay {
     boolean spellsButtonPressed = false;
     boolean combatButtonPressed = false;
     boolean inventoryButtonPressed = false;
+    boolean rightStickXActive = false;
+    boolean rightStickYActive = false;
 
 
     @Inject
@@ -201,7 +203,8 @@ public class DebugOverlay extends Overlay {
             }
         }
 
-       // handleCameraMovement(controller);
+        handleCameraMovement();
+        handleCameraZoom();
 
         // Left click
         if (controller.getButton(plugin.getControllerConfig().leftClickButton().buttonMask)) {
@@ -316,24 +319,57 @@ public class DebugOverlay extends Overlay {
         double xJoy = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTX);
         double yJoy = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY);
 
-        // Release all keys initially
-        robot.keyRelease(KeyEvent.VK_RIGHT);
-        robot.keyRelease(KeyEvent.VK_LEFT);
-        robot.keyRelease(KeyEvent.VK_UP);
-        robot.keyRelease(KeyEvent.VK_DOWN);
-
         // Handle x-axis movement
         if (xJoy > 0.5) {
-            robot.keyPress(KeyEvent.VK_RIGHT);
-        } else if (xJoy < 0.5) {
-            robot.keyPress(KeyEvent.VK_LEFT);
+            if(!rightStickXActive){
+                robot.keyPress(KeyEvent.VK_RIGHT);
+                rightStickXActive = true;
+            }
+        } else if (xJoy < -0.5) {
+            if(!rightStickXActive){
+                robot.keyPress(KeyEvent.VK_LEFT);
+                rightStickXActive = true;
+            }
+        } else {
+            if(rightStickXActive){
+                robot.keyRelease(KeyEvent.VK_LEFT);
+                robot.keyRelease(KeyEvent.VK_RIGHT);
+                rightStickXActive = false;
+            }
         }
 
         // Handle y-axis movement
         if (yJoy > 0.5) {
-            robot.keyPress(KeyEvent.VK_UP);
-        } else if (yJoy < 0.5) {
-            robot.keyPress(KeyEvent.VK_DOWN);
+            if(!rightStickYActive){
+                robot.keyPress(KeyEvent.VK_UP);
+                rightStickYActive = true;
+            }
+        } else if (yJoy < -0.5) {
+            if(!rightStickYActive){
+                robot.keyPress(KeyEvent.VK_DOWN);
+                rightStickYActive = true;
+            }
+        } else {
+            if (rightStickYActive) {
+                robot.keyRelease(KeyEvent.VK_UP);
+                robot.keyRelease(KeyEvent.VK_DOWN);
+                rightStickYActive = false;
+            }
+        }
+    }
+
+    private void handleCameraZoom(){
+        double zoomOutTrigger = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+        double zoomInTrigger = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+
+        // Handle zoom out
+        if (zoomOutTrigger > 0.5) {
+            robot.mouseWheel(-1);
+        }
+
+        // Handle zoom in
+        if (zoomInTrigger > 0.5) {
+            robot.mouseWheel(1);
         }
     }
 
