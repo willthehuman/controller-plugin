@@ -58,7 +58,6 @@ public class ControllerPlugin extends Plugin
 		}
 		frame = (ContainableFrame) window;
 		rootPane = ((ContainableFrame) window).getRootPane();
-
 		overlayManager.add(debugOverlay);
 	}
 
@@ -93,6 +92,10 @@ public class ControllerPlugin extends Plugin
 
 	public Window getWindow(){
 		return window;
+	}
+
+	public ControllerConfig getControllerConfig(){
+		return config;
 	}
 
 	public void externalLog(String text){

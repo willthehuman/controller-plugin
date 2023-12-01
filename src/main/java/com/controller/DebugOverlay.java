@@ -31,9 +31,14 @@ public class DebugOverlay extends Overlay {
 
     private Boolean lockMouse;
 
-    boolean aButtonPressed = false;
-    boolean bButtonPressed = false;
-    boolean startButtonPressed = false;
+    boolean rightClickButtonPressed = false;
+    boolean leftClickButtonPressed = false;
+    boolean toggleButtonPressed = false;
+    boolean prayerButtonPressed = false;
+    boolean spellsButtonPressed = false;
+    boolean combatButtonPressed = false;
+    boolean inventoryButtonPressed = false;
+
 
     @Inject
     private DebugOverlay(Client client, ControllerPlugin plugin)
@@ -86,9 +91,9 @@ public class DebugOverlay extends Overlay {
 
         // draw squares around focused panel
         if(controller != null){
-            if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_LEFTSHOULDER)){
+            if(controller.getButton(plugin.getControllerConfig().minimapButton().buttonMask)){
                 drawSquare(graphics, plugin.getMinimapDrawWidget().getCanvasLocation().getX(), plugin.getMinimapDrawWidget().getCanvasLocation().getY(), plugin.getMinimapDrawWidget().getWidth(), plugin.getMinimapDrawWidget().getHeight(), Color.red);
-            } else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)){
+            } else if (controller.getButton(plugin.getControllerConfig().inventoryButton().buttonMask)){
                 if(!client.isResized()){
                     drawSquare(graphics, getInventoryAndTabsLocation().getX(), getInventoryAndTabsLocation().getY(), getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), Color.yellow);
                 } else {
@@ -182,10 +187,10 @@ public class DebugOverlay extends Overlay {
 
         controller = (SDL2Controller) controllerManager.getControllers().get(0);
 
-        if(getPlayer() != null && lockMouse){
-            if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_LEFTSHOULDER)){
+        if(getPlayer() != null && plugin.getControllerConfig() != null && lockMouse){
+            if(controller.getButton(plugin.getControllerConfig().minimapButton().buttonMask)){
                 leftJoystickPoint = calculateJoystickPos(plugin.getMinimapDrawWidget());
-            } else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)){
+            } else if (controller.getButton(plugin.getControllerConfig().inventoryButton().buttonMask)){
                 if(!client.isResized()){
                     leftJoystickPoint = calculateJoystickPos(getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), getInventoryAndTabsLocation());
                 } else {
@@ -198,42 +203,92 @@ public class DebugOverlay extends Overlay {
 
        // handleCameraMovement(controller);
 
-        if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_A)) {
-            if (!aButtonPressed) {
-                plugin.externalLog("A Pressed");
+        // Left click
+        if (controller.getButton(plugin.getControllerConfig().leftClickButton().buttonMask)) {
+            if (!leftClickButtonPressed) {
                 robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                aButtonPressed = true;
+                leftClickButtonPressed = true;
             }
         } else {
-            if (aButtonPressed) {
-                plugin.externalLog("A Released");
+            if (leftClickButtonPressed) {
                 robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                aButtonPressed = false;
+                leftClickButtonPressed = false;
             }
         }
 
-        if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_B)) {
-            if (!bButtonPressed) {
-                plugin.externalLog("B Pressed");
+        // Right click
+        if (controller.getButton(plugin.getControllerConfig().rightClickButton().buttonMask)) {
+            if (!rightClickButtonPressed) {
                 robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
-                bButtonPressed = true;
+                rightClickButtonPressed = true;
             }
         } else {
-            if (bButtonPressed) {
-                plugin.externalLog("B Released");
+            if (rightClickButtonPressed) {
                 robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
-                bButtonPressed = false;
+                rightClickButtonPressed = false;
             }
         }
 
-        if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_START)) {
-            if (!startButtonPressed) {
-                plugin.externalLog("START Pressed");
+        // Toggler
+        if (controller.getButton(plugin.getControllerConfig().toggleButton().buttonMask)) {
+            if (!toggleButtonPressed) {
                 lockMouse = !lockMouse;
-                startButtonPressed = true;
+                toggleButtonPressed = true;
             }
         } else {
-            startButtonPressed = false;
+            toggleButtonPressed = false;
+        }
+
+        //Prayer tab
+        if (controller.getButton(plugin.getControllerConfig().prayerButton().buttonMask)) {
+            if (!prayerButtonPressed) {
+                robot.keyPress(KeyEvent.VK_F5);
+                prayerButtonPressed = true;
+            }
+        } else {
+            if (prayerButtonPressed) {
+                robot.keyRelease(KeyEvent.VK_F5);
+                prayerButtonPressed = false;
+            }
+        }
+
+        //Spells tab
+        if (controller.getButton(plugin.getControllerConfig().spellsButton().buttonMask)) {
+            if (!spellsButtonPressed) {
+                robot.keyPress(KeyEvent.VK_F6);
+                spellsButtonPressed = true;
+            }
+        } else {
+            if (spellsButtonPressed) {
+                robot.keyRelease(KeyEvent.VK_F6);
+                spellsButtonPressed = false;
+            }
+        }
+
+        //Combat tab
+        if (controller.getButton(plugin.getControllerConfig().combatButton().buttonMask)) {
+            if (!combatButtonPressed) {
+                robot.keyPress(KeyEvent.VK_F1);
+                combatButtonPressed = true;
+            }
+        } else {
+            if (combatButtonPressed) {
+                robot.keyRelease(KeyEvent.VK_F1);
+                combatButtonPressed = false;
+            }
+        }
+
+        //Inventory tab
+        if (controller.getButton(plugin.getControllerConfig().inventoryTabButton().buttonMask)) {
+            if (!inventoryButtonPressed) {
+                robot.keyPress(KeyEvent.VK_ESCAPE);
+                inventoryButtonPressed = true;
+            }
+        } else {
+            if (inventoryButtonPressed) {
+                robot.keyRelease(KeyEvent.VK_ESCAPE);
+                inventoryButtonPressed = false;
+            }
         }
 
         /*try {
