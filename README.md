@@ -1,3 +1,4 @@
+Note that this plugin will never be approved by runelite because of the use of java robot.
 # Controller
 A controller input plugin for RuneLite.
 
