@@ -6,22 +6,18 @@ import net.runelite.api.Player;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.widgets.Widget;
-import net.runelite.client.ui.ContainableFrame;
 import net.runelite.client.ui.overlay.Overlay;
-
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
+import org.libsdl.SDL;
+import uk.co.electronstudio.sdl2gdx.SDL2Controller;
+import uk.co.electronstudio.sdl2gdx.SDL2ControllerManager;
 
 import javax.inject.Inject;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.Objects;
-
-import org.libsdl.SDL;
-import uk.co.electronstudio.sdl2gdx.*;
 
 public class DebugOverlay extends Overlay {
 
@@ -29,7 +25,7 @@ public class DebugOverlay extends Overlay {
     private Player player;
     private final ControllerPlugin plugin;
     private SDL2ControllerManager controllerManager;
-
+    private SDL2Controller controller;
     private Point leftJoystickPoint;
     private Robot robot;
 
@@ -82,17 +78,23 @@ public class DebugOverlay extends Overlay {
             //drawLocalPoint(graphics, getPlayer().getLocalLocation(), Color.CYAN);
         }
 
-        // draw joystick pos
+        // move mouse
         if(leftJoystickPoint != null && lockMouse){
             moveMouseToPoint(leftJoystickPoint, new java.awt.Point((int) (plugin.getWindow().getLocation().getX() + client.getCanvas().getX()), (int) (plugin.getWindow().getLocation().getY() + client.getCanvas().getY() + 25)));
-            drawPoint(graphics, leftJoystickPoint, Color.RED);
+            //drawPoint(graphics, leftJoystickPoint, Color.RED);
         }
 
-        // draw squares
-        drawSquare(graphics, plugin.getMinimapDrawWidget().getCanvasLocation().getX(), plugin.getMinimapDrawWidget().getCanvasLocation().getY(), plugin.getMinimapDrawWidget().getWidth(), plugin.getMinimapDrawWidget().getHeight(), Color.red);
-        drawSquare(graphics, getInventoryAndTabsLocation().getX(), getInventoryAndTabsLocation().getY(), getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), Color.yellow);
-        drawSquare(graphics, plugin.getMainWidget().getCanvasLocation().getX(), plugin.getMainWidget().getCanvasLocation().getY(), plugin.getMainWidget().getWidth(), plugin.getMainWidget().getHeight(), Color.green);
-
+        // draw squares around focused panel
+        if(controller != null){
+            if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_LEFTSHOULDER)){
+                drawSquare(graphics, plugin.getMinimapDrawWidget().getCanvasLocation().getX(), plugin.getMinimapDrawWidget().getCanvasLocation().getY(), plugin.getMinimapDrawWidget().getWidth(), plugin.getMinimapDrawWidget().getHeight(), Color.red);
+            } else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)){
+                drawSquare(graphics, getInventoryAndTabsLocation().getX(), getInventoryAndTabsLocation().getY(), getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), Color.yellow);
+            } else {
+                if(lockMouse)
+                    drawSquare(graphics, plugin.getMainWidget().getCanvasLocation().getX(), plugin.getMainWidget().getCanvasLocation().getY(), plugin.getMainWidget().getWidth(), plugin.getMainWidget().getHeight(), Color.green);
+            }
+        }
         return null;
     }
 
@@ -174,16 +176,15 @@ public class DebugOverlay extends Overlay {
             plugin.externalLog(exception.getMessage());
         }
 
-        SDL2Controller controller = (SDL2Controller) controllerManager.getControllers().get(0);
-        //plugin.externalLog("leftx : " + controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX) + "lefty : " + controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY));
+        controller = (SDL2Controller) controllerManager.getControllers().get(0);
 
         if(getPlayer() != null && lockMouse){
             if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_LEFTSHOULDER)){
-                leftJoystickPoint = calculateJoystickPos(controller, plugin.getMinimapDrawWidget());
+                leftJoystickPoint = calculateJoystickPos(plugin.getMinimapDrawWidget());
             } else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)){
-                leftJoystickPoint = calculateJoystickPos(controller, getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), getInventoryAndTabsLocation());
+                leftJoystickPoint = calculateJoystickPos(getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), getInventoryAndTabsLocation());
             } else {
-                leftJoystickPoint = calculateJoystickPos(controller, plugin.getMainWidget());
+                leftJoystickPoint = calculateJoystickPos(plugin.getMainWidget());
             }
         }
 
@@ -248,7 +249,7 @@ public class DebugOverlay extends Overlay {
         robot.mouseMove(currentMouse.x + deltaX, currentMouse.y + deltaY);
     }
 
-    private void handleCameraMovement(SDL2Controller controller) {
+    private void handleCameraMovement() {
         double xJoy = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTX);
         double yJoy = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY);
 
@@ -273,7 +274,7 @@ public class DebugOverlay extends Overlay {
         }
     }
 
-    private Point calculateJoystickPos(SDL2Controller controller, Widget parent) {
+    private Point calculateJoystickPos(Widget parent) {
         // Joystick values ranging from -1 to 1
         double xJoy = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX);
         double yJoy = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY);
@@ -297,7 +298,7 @@ public class DebugOverlay extends Overlay {
         return new Point((int) xResult, (int) yResult);
     }
 
-    private Point calculateJoystickPos(SDL2Controller controller, int width, int height, Point location) {
+    private Point calculateJoystickPos(int width, int height, Point location) {
         // Joystick values ranging from -1 to 1
         double xJoy = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX);
         double yJoy = controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY);
