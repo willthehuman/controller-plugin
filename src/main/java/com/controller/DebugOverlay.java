@@ -387,8 +387,8 @@ public class DebugOverlay extends Overlay {
         double yPoint = parent.getCanvasLocation().getY() + windowHeight / 2;
 
         // Calculate the resulting point
-        double xResult = xPoint + xJoy * windowWidth;
-        double yResult = yPoint + yJoy * windowHeight;
+        double xResult = xPoint + xJoy * windowWidth / 1.5;
+        double yResult = yPoint + yJoy * windowHeight / 1.5;
 
         // Clamp the resulting point within the window boundaries
         xResult = Math.min(parent.getCanvasLocation().getX() + windowWidth, Math.max(parent.getCanvasLocation().getX(), xResult));
@@ -407,8 +407,8 @@ public class DebugOverlay extends Overlay {
         double yPoint = location.getY() + (double) height / 2;
 
         // Calculate the resulting point
-        double xResult = xPoint + xJoy * width;
-        double yResult = yPoint + yJoy * height;
+        double xResult = xPoint + xJoy * width / 1.5;
+        double yResult = yPoint + yJoy * height / 1.5;
 
         // Clamp the resulting point within the window boundaries
         xResult = Math.min(location.getX() + width, Math.max(location.getX(), xResult));
