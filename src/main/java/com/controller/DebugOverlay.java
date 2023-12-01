@@ -89,7 +89,11 @@ public class DebugOverlay extends Overlay {
             if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_LEFTSHOULDER)){
                 drawSquare(graphics, plugin.getMinimapDrawWidget().getCanvasLocation().getX(), plugin.getMinimapDrawWidget().getCanvasLocation().getY(), plugin.getMinimapDrawWidget().getWidth(), plugin.getMinimapDrawWidget().getHeight(), Color.red);
             } else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)){
-                drawSquare(graphics, getInventoryAndTabsLocation().getX(), getInventoryAndTabsLocation().getY(), getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), Color.yellow);
+                if(!client.isResized()){
+                    drawSquare(graphics, getInventoryAndTabsLocation().getX(), getInventoryAndTabsLocation().getY(), getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), Color.yellow);
+                } else {
+                    drawSquare(graphics, plugin.getInventoryDrawWidget().getCanvasLocation().getX(), plugin.getInventoryDrawWidget().getCanvasLocation().getY(), plugin.getInventoryDrawWidget().getWidth(), plugin.getInventoryDrawWidget().getHeight(), Color.yellow);
+                }
             } else {
                 if(lockMouse)
                     drawSquare(graphics, plugin.getMainWidget().getCanvasLocation().getX(), plugin.getMainWidget().getCanvasLocation().getY(), plugin.getMainWidget().getWidth(), plugin.getMainWidget().getHeight(), Color.green);
@@ -182,7 +186,11 @@ public class DebugOverlay extends Overlay {
             if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_LEFTSHOULDER)){
                 leftJoystickPoint = calculateJoystickPos(plugin.getMinimapDrawWidget());
             } else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)){
-                leftJoystickPoint = calculateJoystickPos(getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), getInventoryAndTabsLocation());
+                if(!client.isResized()){
+                    leftJoystickPoint = calculateJoystickPos(getInventoryAndTabsWidth(), getInventoryAndTabsHeight(), getInventoryAndTabsLocation());
+                } else {
+                    leftJoystickPoint = calculateJoystickPos(plugin.getInventoryDrawWidget());
+                }
             } else {
                 leftJoystickPoint = calculateJoystickPos(plugin.getMainWidget());
             }

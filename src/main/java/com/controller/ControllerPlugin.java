@@ -1,9 +1,9 @@
 package com.controller;
 
 import com.google.inject.Provides;
-import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.CanvasSizeChanged;
 import net.runelite.api.events.GameTick;
@@ -13,11 +13,12 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.ui.*;
+import net.runelite.client.ui.ContainableFrame;
 import net.runelite.client.ui.overlay.OverlayManager;
 
-import java.awt.*;
+import javax.inject.Inject;
 import javax.swing.*;
+import java.awt.*;
 
 @Slf4j
 @PluginDescriptor(
@@ -64,7 +65,7 @@ public class ControllerPlugin extends Plugin
 	public Widget getMinimapDrawWidget()
 	{
 		Widget fixedWidget = client.getWidget(WidgetInfo.FIXED_VIEWPORT_MINIMAP);
-		if(fixedWidget == null){
+		if(client.isResized()){
 			return client.getWidget(WidgetInfo.RESIZABLE_MINIMAP_STONES_DRAW_AREA);
 		}
 		return fixedWidget;
@@ -72,7 +73,7 @@ public class ControllerPlugin extends Plugin
 
 	public Widget getInventoryDrawWidget(){
 		Widget fixedWidget = client.getWidget(WidgetInfo.FIXED_VIEWPORT_INVENTORY_CONTAINER);
-		if(fixedWidget == null){
+		if(client.isResized()){
 			return client.getWidget(WidgetInfo.RESIZABLE_VIEWPORT_INVENTORY_PARENT);
 		}
 		return fixedWidget;
@@ -80,8 +81,8 @@ public class ControllerPlugin extends Plugin
 
 	public Widget getMainWidget(){
 		Widget fixedWidget = client.getWidget(WidgetInfo.FIXED_VIEWPORT);
-		if(fixedWidget == null){
-			return client.getWidget(WidgetInfo.MULTICOMBAT_RESIZABLE_CLASSIC);
+		if(client.isResized()){
+			return client.getWidgetRoots()[0];
 		}
 		return fixedWidget;
 	}
@@ -119,5 +120,42 @@ public class ControllerPlugin extends Plugin
 	ControllerConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(ControllerConfig.class);
+	}
+
+	protected void hideWidgets(boolean hide)
+	{
+		/*// hiding in fixed mode does not actually hide stuff and might break stuff so let's not do that
+		if (hide && !client.isResized())
+		{
+			hideWidgets(false);
+		}
+		else
+		{
+			clientThread.invokeLater(() ->
+			{
+				// modern resizeable
+				Widget root = client.getWidget(164, 65);
+				if (root != null)
+					hideWidgetChildren(root, hide);
+
+				// classic resizeable
+				root =  client.getWidget(161, 33);
+				if (root != null)
+					hideWidgetChildren(root, hide);
+
+				// fix zoom modern resizeable
+				// zoom is child widget with the id 2 but if the parent is hidden the child is too
+				Widget zoom = client.getWidget(161, 90);
+				if (zoom != null)
+					zoom.setHidden(false);
+
+				// fix zoom classic resizeable
+				// zoom is child widget with the id 2 but if the parent is hidden the child is too
+				zoom = client.getWidget(164, 87);
+				if (zoom != null)
+					zoom.setHidden(false);
+			});
+		}*/
+
 	}
 }
