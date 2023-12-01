@@ -7,7 +7,7 @@ You can bind different buttons to different tabs that already have a shortcut (s
 * It uses the default shortcuts
 
 # Showcase
+https://github.com/willthehuman/controller-plugin/assets/38778465/2dbfec19-ac5e-4851-99e5-bf259e4daa3a
 
 
-Uploading Screen Recording 2023-12-01 at 4.06.36 PM.mov…
 
